@@ -11,7 +11,13 @@ class Question(models.Model):
 	pub_date = models.DateTimeField('date published')
 
 	def was_published_recently(self):
-		return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+		now = timezone.now()
+		# 于近期出版 并且 出版时间在1天之前的全部返回False
+		return now - datetime.timedelta(days=1) <= self.pub_date <= now
+	# Admin中的was_published_recently一列默认是显示T/F; 我们在这里修改标题，并改成图片样式表示T/F
+	was_published_recently.admin_order_field = 'pub_date'
+	was_published_recently.boolean = True
+	was_published_recently.short_description = 'Published recently?'
 
 # 创建 Choice 模型
 class Choice(models.Model):
